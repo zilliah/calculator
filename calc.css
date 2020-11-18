@@ -1,0 +1,48 @@
+:root {
+    --light-color: rgb(211, 255, 199);
+    --dark-color: black;
+    --bright-color: rgb(95, 255, 55);
+    --mid-color: rgb(134, 134, 134);
+
+    font-size: 62.5%;
+}
+
+body {
+    font-size: 4rem;    
+}
+
+/* uhhhh this is some flex stuff but I think grid is a much better choice here bc yea */
+
+/* STOP FUCKING WITH THIS and just do sth passable for now */
+
+.container button {
+    background-color: var(--dark-color);
+    color: var(--bright-color);
+    outline-color: var(--bright-color);
+    border: none;
+    width: 25%;
+    margin: 2%;
+    
+}
+
+.container {
+    background: var(--mid-color);
+    max-width: 400px;
+    height: 300px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+}
+
+.buttons {
+    border-style: none;
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+}
+
+.display {
+    background: var(--light-color);
+    margin-bottom: 5%;
+}   
