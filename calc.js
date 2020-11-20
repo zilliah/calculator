@@ -22,6 +22,7 @@ numBtns.forEach(btn => {
 opsBtns.forEach(btn => {
     btn.addEventListener("click", event => {
         currOp = btn.getAttribute("value");
+
         storedVal = currVal;
         currVal = 0;
         equationDisplay.textContent = storedVal + " " + btn.textContent;
@@ -47,10 +48,16 @@ clearBtn.addEventListener("click", event => {
 //equals button evaluate
 const equalsBtn = document.querySelector("button[value='equals'");
 equalsBtn.addEventListener("click", event => {
-    equationDisplay.textContent += " " + currVal;
     result = operate(currOp, storedVal, currVal);
-
+    if (result === "No operator") {
+        storedVal = currVal;
+        currDisplay.textContent = currVal;
+        equationDisplay.textContent = currVal;
+        currVal = 0;
+        return;
+    }
     //update displays
+    equationDisplay.textContent += " " + currVal;
     currDisplay.textContent = result;  
     currVal = 0;
     storedVal = result;
@@ -69,6 +76,8 @@ function operate(op, x, y) {
             return x * y;
         case "div":
             return divide(x,y);
+        default:
+            return "No operator";
     }
 }
 
@@ -77,8 +86,8 @@ function operate(op, x, y) {
 //todo need to allow add'l input here
 function divide(a, b) {
     if (currVal === 0) {
-        window.alert("Cannot divide by 0 - enter a new value.");
-        return;
+        window.alert("Cannot divide by 0.");
+        return "Error";
     } else {
         return a / b;
     }
