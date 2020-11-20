@@ -28,7 +28,7 @@ body {
 .container {
     background: var(--mid-color);
     max-width: 400px;
-    height: 300px;
+    height: 350px;
     margin: auto;
     display: flex;
     flex-direction: column;
@@ -45,4 +45,21 @@ body {
 .display {
     background: var(--light-color);
     margin-bottom: 5%;
+    height: 9rem;
+    text-align: right;
 }   
+
+.display .equation {
+    font-size: 3rem;
+}
+
+.operators {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.operators button {
+    width: 4rem;
+}
+
