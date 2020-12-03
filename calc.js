@@ -7,6 +7,7 @@ let currVal = 0; //the value currently being input by user
 let currOp; //the current operation
 let equation = ""; //a string representation of the current operation
 let result; //the result of the operation
+let floatLimit = 14; //max number of decimals shown on the screen
 
 
 function updateDisplays(curr, eqn) {
@@ -17,89 +18,65 @@ function updateDisplays(curr, eqn) {
 
 //accept number input
 numBtns.forEach(btn => {
-    if (result && !currOp) {
-        //TODO I think there was something w/ numbers getting squashed on when they shouldn't
-        //butuhhhhhh ummmmm
-    }
     btn.addEventListener("click", event => {
+        if (result) {
+            storedVal = result;
+            result = undefined;
+            if (currOp) {
+                equation = storedVal + " " + currOp;
+                updateDisplays(0, equation);
+            } else {  
+                updateDisplays(0, "");  
+            }
+        } 
         let num = btn.getAttribute("value");
-        //TODO limit number size
-        currVal = currVal*10 + num*1;
-        currDisplay.textContent = currVal; 
+        let checkNum = currVal*10 + num*1;
+        if ((Number.isSafeInteger(checkNum))) {
+            currVal = currVal*10 + num*1;
+            currDisplay.textContent = currVal; 
+        }
     });
 });
-
-
-
 
 //accept operand input
 opsBtns.forEach(btn => {
     btn.addEventListener("click", event => {
-
-        //1. simple  equation
-        //no currOp
-        if (currOp === undefined) {
-            storedVal = currVal;
-            currOp = btn.getAttribute("value");
-            currVal = 0;
-            result = 0;
-            equation = `${storedVal} ${btn.textContent}`
-            //let operate happen in equals or later operations
+        if (currOp === undefined) { //no currOp, move stuff around but don't actually operate
+            if (result) { //using the previous result for upcoming operation
+                storedVal = result;
+                result = undefined;
+            } else { //no result, this is the start of a new thing
+                storedVal = currVal;
+                currVal = 0;
+            }
+            currOp = btn.textContent;
+            equation = `${storedVal} ${currOp}`
             updateDisplays(currVal, equation);
-        } else { //have a currOp
-
-            
-            
-            
-            //chained eqn
-            //have 2 values to work with
-            // ===================== UNFINISHED TODO ======================
-            
-            result = operate(storedVal, currVal, currOp); //evaluate w/ old operator
+        } else { //have a currOp, do the operation
+            if (result) {
+                storedVal = result;
+                result = undefined;
+            }
+            result = operate(storedVal, currVal, currOp); 
+            if (result === "Error") {
+                window.alert("Error! Cannot divide by zero!");
+                clear();
+                return;
+            }
             currVal = 0;
             storedVal = result;
-            currOp = btn.getAttribute("value"); //new operator
-            equation = `${storedVal} ${btn.textContent}`;
+            currOp = btn.textContent;
+            equation = `${storedVal} ${currOp}`;
             updateDisplays(currVal, equation); 
-            
-            
-
-            //multiple operands pushed in a row
-            //no 2nd value
-            //use 0 as 2nd value?
-            //also has to work if 0 is actual value
-            
-            //wait can I somehow combine the evaluate() fxn below?
         }
-        
-        //2. chained eqn
-        //already have a currOp
-        //will need to evaluate
-
-        // 3. multiple operands in a row
-        //already have a currOp but no 2nd button
-        //i guess could take 0 for values here
-        //would be more consistent hmm
-
-        //4. immediately after equals (take 0 for 1st value)
-
-
-
-
     });
 });
-
-
-
-
-
 
 //equals button evaluate
 const equalsBtn = document.querySelector("button[value='equals'");
 equalsBtn.addEventListener("click", event => evaluate());
-
 function evaluate() {
-    //4. after a number (no operand)
+    //after a number (no operand)
     if (currOp === undefined) {
         result = operate(currVal);
         equation = result
@@ -108,44 +85,34 @@ function evaluate() {
         storedVal = 0;
 
     } else {
-        //1-2. simple or chained equation
+        //simple or chained equation
         result = operate(storedVal, currVal, currOp);
         if (result === "Error") {
             window.alert("Error! Cannot divide by zero!");
             clear();
             return;
         }
-        // equation = `${equationDisplay.textContent} ${currVal}`
         equation = equation + " " + currVal;
         updateDisplays(result, equation);
         currVal = 0;
         storedVal = 0;
         currOp = undefined;
     }
-
-    // currVal = 0;
     currOp = undefined;
 
 }
-
-
-
-
-
-
-/*  GAAAAAAAAAAAAAAAAAAAAAAAH ok i think past here it's ok */
 
 //operate only, don't include any display stuff here
 function operate(x, y, op) {
     if (y === undefined) return x;
     switch (op) {
-        case "add":
+        case "+":
             return x + y;
-        case "subt":
+        case "-":
             return x - y;
-            case "mult": 
+            case "×": 
             return x * y;
-        case "div":
+        case "÷":
             return divide(x,y);
         default:
             return "No operator";
@@ -173,7 +140,6 @@ function clear() {
     result = undefined;
 }
 
-//TODO remove this when done debugging
 function showVals() {
     console.log("currVal is: " + currVal);
     console.log("storedVal is: " + storedVal);
